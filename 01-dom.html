@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <div id="app">
+        <h1>
+            {{title}}
+            <h2>{{a}} --- {{b}}</h2>
+        </h1>
+        <p>{{content}}</p>
+    </div>
+    <script>
+        const root = document.querySelector('#app');
+        const data = {
+            b: 'aadf',
+            a: 'hah',
+            title: '这是标题',
+            content: '这是内容'
+        }
+        const compiler = (node, data) => {
+            const cn = node.childNodes || [];
+            cn.forEach((n) => {
+                const nChildNodes = n.childNodes || []
+                if(n.nodeType === 3){
+                    const res = n.nodeValue.replace(/\{\{(.+?)\}\}/g,($, $1) => {
+                        if($1 in data){
+                            return data[$1];
+                        }
+                    });
+                    n.nodeValue = res;
+                }else if(nChildNodes.length){
+                    compiler(n, data);
+                }
+            });
+            return node;
+        }
+        const cNode = root.cloneNode(true);
+        const nNode = compiler(cNode, data);
+        document.body.replaceChild(nNode,root)
+    </script>
+</body>
+</html>
